@@ -102,7 +102,7 @@ int main() {
     getUserInput(n, coefficients, system);
     solveSystem(n, coefficients, solution);
     
-    //prints the solution from the operations 
+    //prints the solution from the operations in the row operations 
     printf("The solution for system %c is:\n", system);
     for (int i = 0; i < n; i++) {
         if (system == 'A') {
