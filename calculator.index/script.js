@@ -10,7 +10,7 @@ let buttons = document.getElementsByClassName("button");
     button.textContent != "√" && 
     button.textContent != "x ²" && 
     button.textContent != "%" && 
-    button.textContent != "<=" && 
+    button.textContent != "Del" && 
     button.textContent != "±" && 
     button.textContent != "sin" && 
     button.textContent != "cos" && 
@@ -34,7 +34,7 @@ let buttons = document.getElementsByClassName("button");
       divide();
     } else if (button.textContent === "±") {
       plusMinus();
-    } else if (button.textContent === "<=") {
+    } else if (button.textContent === "Del") {
       backspace();
     } else if (button.textContent === "%") {
       percent();
