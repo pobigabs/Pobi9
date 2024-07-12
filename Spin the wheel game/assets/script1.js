@@ -42,7 +42,7 @@ function spin(){
     if(AC.includes(results[0])) SelectedItem = "Air Conditioner";
     if(Camera.includes(results[0])) SelectedItem = "Camera Sport Action";
     if(Zonk.includes(results[0])) SelectedItem = "Zonk";
-    if(PS.includes(results[0])) SelectedItem = "Playstation 4 slim";
+    if(PS.includes(results[0])) SelectedItem = "Playstation 5 slim";
     if(Headset.includes(results[0])) SelectedItem = "Headset Gaming";
     if(Drone.includes(results[0])) SelectedItem = "Drone Mini";
     if(ROG.includes(results[0])) SelectedItem = "Laptop Asus ROG";
