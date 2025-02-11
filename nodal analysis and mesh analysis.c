@@ -30,8 +30,15 @@ void solveSystem(int n, float coefficients[n][n+1], float solution[n]) {
             augmentedMatrix[i][j] = coefficients[i][j];
         }
     }
-    // Measure the start time
-    clock_t start_time = clock();
+   clock_t start, end;
+    double cpu_time_used;
+
+    // Start measuring time
+    start = clock();
+
+    // Code to measure
+    for (long i = 0; i < 1000000; i++) {
+        // Example operation
 
 
     for (int i = 0; i < n; i++) {
@@ -71,10 +78,15 @@ void solveSystem(int n, float coefficients[n][n+1], float solution[n]) {
         }
         solution[i] /= augmentedMatrix[i][i];
     }
-    // Measure the end time
-    clock_t end_time = clock();
-    double cpu_time_used = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
-    printf("Time taken for C implementation: %f seconds\n", cpu_time_used);
+    // End measuring time
+    end = clock();
+
+    // Calculate execution time in seconds
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+    printf("Execution Time: %f seconds\n", cpu_time_used);
+
+    return 0;
 }
 
 //main function to know whether the user wants to solve for nodal voltages or mesh currnets 
