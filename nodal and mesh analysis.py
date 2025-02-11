@@ -56,6 +56,9 @@ def main():
     
     # Measure the end time after solving the system
     end_time = time.time()
+
+    for i in range(1000000):
+    pass 
     
     if solution is not None:
         print(f"The solution for system {system} is:")
