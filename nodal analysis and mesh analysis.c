@@ -4,123 +4,126 @@
 #include <time.h>
 
 #define MAX_EQUATIONS 10
-//Function to allow the user to input the coeffients and conatant
-void getUserInput(int n, float coefficients[n][n+1], char system) {
-    printf("The format for:\n1. Nodal analysis is y1V1 + y2V2+ ...+ynVn = I1\n2. Mesh analysis is x1I1 + x2I2+ ...+ xnIn = V1 where\ny = admittance and x = impedance\n");
 
-    if (system == 'A') {
-        printf("Enter the coefficients and constants for each equation in system A separating them with spaces:\n");
-    } else {
-        printf("Enter the coefficients and constants for each equation in system B separating them with spaces:\n");
-    }
+// Function to get user input for coefficients and constants
+void getUserInput(int n, float coefficients[n][n + 1], char system) {
+    printf("\nEquation format:\n");
+    printf("1. Nodal Analysis: y1V1 + y2V2 + ... + ynVn = I1\n");
+    printf("2. Mesh Analysis: x1I1 + x2I2 + ... + xnIn = V1\n");
+    printf("where y = admittance, x = impedance.\n\n");
+
+    printf("Enter the coefficients and constants for each equation (space-separated):\n");
 
     for (int i = 0; i < n; i++) {
-        printf("Equation %d: ", i+1);
+        printf("Equation %d: ", i + 1);
         for (int j = 0; j <= n; j++) {
             scanf("%f", &coefficients[i][j]);
         }
     }
 }
-//Function to solve the system of equation using the augmented matrix format
-void solveSystem(int n, float coefficients[n][n+1], float solution[n]) {
-    float augmentedMatrix[n][n+1];
 
+// Function to solve the system of equations using Gaussian elimination
+void solveSystem(int n, float coefficients[n][n + 1], float solution[n]) {
+    float augmentedMatrix[n][n + 1];
+
+    // Copy coefficients into augmented matrix
     for (int i = 0; i < n; i++) {
         for (int j = 0; j <= n; j++) {
             augmentedMatrix[i][j] = coefficients[i][j];
         }
     }
-   clock_t start, end;
-    double cpu_time_used;
 
-    // Start measuring time
-    start = clock();
+    // Start measuring time for solving the system
+    clock_t start_time = clock();
 
-    // Code to measure
-    for (long i = 0; i < 1000000; i++) {
-        // Example operation
-
-
+    // Forward Elimination (Gaussian Elimination)
     for (int i = 0; i < n; i++) {
         float maxVal = augmentedMatrix[i][i];
         int maxRow = i;
 
-        for (int j = i+1; j < n; j++) {
+        // Find the row with the maximum absolute value in column i
+        for (int j = i + 1; j < n; j++) {
             if (fabs(augmentedMatrix[j][i]) > fabs(maxVal)) {
                 maxVal = augmentedMatrix[j][i];
                 maxRow = j;
             }
         }
 
+        // If the pivot is zero, system has no unique solution
         if (maxVal == 0) {
-            printf("The system of equations has no unique solution or no solution.\n");
+            printf("\nError: The system of equations has no unique solution.\n");
             return;
         }
 
+        // Swap rows to bring the largest absolute value to the pivot position
         for (int j = 0; j <= n; j++) {
             float temp = augmentedMatrix[maxRow][j];
             augmentedMatrix[maxRow][j] = augmentedMatrix[i][j];
             augmentedMatrix[i][j] = temp;
         }
 
-        for (int j = i+1; j < n; j++) {
+        // Make all rows below the pivot zero in the current column
+        for (int j = i + 1; j < n; j++) {
             float factor = augmentedMatrix[j][i] / augmentedMatrix[i][i];
-            for (int k = 0; k <= n; k++) {
+            for (int k = i; k <= n; k++) {
                 augmentedMatrix[j][k] -= factor * augmentedMatrix[i][k];
             }
         }
     }
 
-    for (int i = n-1; i >= 0; i--) {
+    // Back Substitution
+    for (int i = n - 1; i >= 0; i--) {
         solution[i] = augmentedMatrix[i][n];
-        for (int j = i+1; j < n; j++) {
+        for (int j = i + 1; j < n; j++) {
             solution[i] -= augmentedMatrix[i][j] * solution[j];
         }
         solution[i] /= augmentedMatrix[i][i];
     }
+
     // End measuring time
-    end = clock();
+    clock_t end_time = clock();
+    double execution_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
 
-    // Calculate execution time in seconds
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-
-    printf("Execution Time: %f seconds\n", cpu_time_used);
-
-    return 0;
+    printf("\nExecution Time: %.6f seconds\n", execution_time);
 }
 
-//main function to know whether the user wants to solve for nodal voltages or mesh currnets 
+// Main function
 int main() {
     char system;
     int n;
-    float coefficients[MAX_EQUATIONS][MAX_EQUATIONS+1];
+    float coefficients[MAX_EQUATIONS][MAX_EQUATIONS + 1];
     float solution[MAX_EQUATIONS];
 
-    printf("Enter 'A' to solve nodal analysis(system A), or 'B' to solve mesh analysis(system B): ");
+    // Get system type from user
+    printf("Enter 'A' for nodal analysis or 'B' for mesh analysis: ");
     scanf(" %c", &system);
 
     if (system != 'A' && system != 'B') {
         printf("Invalid input. Please enter 'A' or 'B'.\n");
-        return 0;
+        return 1;
     }
 
-    if (system == 'A') {
-        printf("Enter the number of equations for system A: ");
-    } else {
-        printf("Enter the number of equations for system B: ");
-    }
+    printf("\nEnter the number of equations: ");
     scanf("%d", &n);
 
+    if (n <= 0 || n > MAX_EQUATIONS) {
+        printf("Invalid number of equations. Please enter a positive integer (≤ %d).\n", MAX_EQUATIONS);
+        return 1;
+    }
+
+    // Get coefficients and constants
     getUserInput(n, coefficients, system);
+
+    // Solve the system
     solveSystem(n, coefficients, solution);
-    
-    //prints the solution from the operations in the row operations 
-    printf("The solution for system %c is:\n", system);
+
+    // Print solution
+    printf("\nSolution for system %c:\n", system);
     for (int i = 0; i < n; i++) {
         if (system == 'A') {
-            printf("V%d = %.2f V\n", i+1, solution[i]);
+            printf("V%d = %.4f V\n", i + 1, solution[i]);
         } else {
-            printf("I%d = %.2f A\n", i+1, solution[i]);
+            printf("I%d = %.4f A\n", i + 1, solution[i]);
         }
     }
 
